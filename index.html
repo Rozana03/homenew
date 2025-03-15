@@ -3,64 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driver Route Map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
+    <title>D.R.I.F.T</title>
     <style>
-        #map { height: 500px; width: 100%; }
-        .controls { margin: 10px 0; }
+        body {
+            background-color: rgb(53, 98, 117);
+            color: rgb(252, 251, 251);
+            font-family: 'ubuntu', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px;
+            background-color: inherit;
+        }
+        .navbar .logo {
+            font-size: 30px;
+            font-weight: 600;
+        }
+        .navbar .logo span {
+            color: crimson;
+        }
+        .navbar .links a {
+            margin-left: 20px;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80vh;
+            padding: 0 20px;
+        }
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button {
+            background-color: inherit;
+            border: 2px solid white;
+            padding: 20px;
+            margin: 20px;
+            font-size: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+        }
+        .button:hover {
+            transform: scale(1.1);
+        }
+        .image-container {
+            width: 30%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .left-image {
+            margin-right: 20px;
+        }
+        .right-image {
+            margin-left: 20px;
+        }
+        .manual-page, .dynamic-page, .contact-page, .help-page {
+            display: none;
+            background-color: rgb(53, 98, 117);
+            color: rgba(248, 243, 243, 0.958);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            animation: zoomIn 0.5s ease-in-out;
+        }
+        @keyframes zoomIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        .manual-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            flex-direction: column;
+        }
+        .dropdown-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 20px;
+        }
+        .dropdown-column {
+            display: flex;
+            flex-direction: column;
+            width: 48%;
+        }
+        .dropdown {
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 14px;
+            background-color: rgb(5, 72, 124);
+            width: 100%;
+            color: white;
+            border-radius: 5px;
+        }
+        .result-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: inherit;
+            border: 2px solid white;
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+        }
+        .result-button:hover {
+            transform: scale(1.1);
+        }
+        .right-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .probability {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: inherit;
+            border: 2px solid white;
+            padding: 10px 20px;
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+        }
+        .back-button:hover {
+            transform: scale(1.1);
+        }
+        #safeRouteButton {
+            color: black;
+        }
+        .contact-page, .help-page {
+            display: none;
+            background-color: rgb(53, 98, 117);
+            color: rgba(248, 243, 243, 0.958);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            animation: zoomIn 0.5s ease-in-out;
+        }
+        .chat-box {
+            width: 300px;
+            height: 400px;
+            background-color: rgb(243, 240, 240);
+            color: rgb(0, 0, 0);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .chat-box textarea {
+            width: 93%;
+            height: 80%;
+            resize: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 14px;
+            color: black;
+        }
+        .chat-box button {
+            padding: 10px;
+            background-color: rgb(53, 98, 117);
+            color: rgb(250, 250, 250);
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .chat-box button:hover {
+            background-color: rgb(35, 75, 95);
+        }
     </style>
 </head>
 <body>
-
-    <div class="controls">
-        <input type="text" id="source" placeholder="Enter Source (lat,lng)" />
-        <input type="text" id="destination" placeholder="Enter Destination (lat,lng)" />
-        <button onclick="plotRoute()">Show Route</button>
+    <div class="navbar">
+        <div class="logo">
+            D.R.I.<span>F.T</span>
+        </div>
+        <div class="links">
+            <a onclick="showContact()">CONTACT</a>
+            <a onclick="showHelp()">HELP</a>
+            <a href="https://sarasherief.github.io/newfeedbackpage/">FEEDBACK</a>
+        </div>
     </div>
-    
-    <div id="map"></div>
+    <div class="content">
+        <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+        <dotlottie-player src="https://lottie.host/10945415-2373-45ce-973f-1211e376b540/JpWWsUrZS3.lottie" background="transparent" speed="1" style="width: 500px; height: 500px; position: relative; top:-35px;left: 10px; " loop autoplay></dotlottie-player>
+        <!-- Buttons -->
+        <div class="buttons-container">
+            <button class="button" onclick="location.href='http://127.0.0.1:5000';"><b>PREDICTION</b></button>
+            <button class="button" onclick="location.href='https://sarasherief.github.io/map/';"><b>ROUTE</b></button>
+        </div>
+
+        <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+        <dotlottie-player src="https://lottie.host/8aa3a787-9e1d-4672-9d36-ea472e3ca99c/vluzDQxJI0.lottie" background="transparent" speed="1" style="width: 500px; height: 500px; top:10px;left: 500px;" loop autoplay></dotlottie-player>
+    </div>
+
+    <div class="manual-page" id="manualPage">
+        <button class="back-button" onclick="closeManual()">Back</button>
+        <div class="manual-container">
+            <div class="dropdown-container">
+                <div class="dropdown-column">
+                    <label for="gender">Gender:</label>
+                    <select class="dropdown" id="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <label for="Weather">Weather:</label>
+                    <select class="dropdown" id="Weather">
+                        <option value="">Select Weather</option>
+                        <option value="sunny">Sunny</option>
+                        <option value="rainy">Rainy</option>
+                        <option value="windy">Windy</option>
+                    </select>
+
+                    <label for="state">State:</label>
+                    <select class="dropdown" id="state">
+                        <option value="">Select State</option>
+                        <option value="kerala">Kerala</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="dropdown-column">
+                    <label for="experience">Experience:</label>
+                    <select class="dropdown" id="experience">
+                        <option value="">Select Experience</option>
+                        <option value="novice">Novice</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="expert">Expert</option>
+                    </select>
+
+                    <label for="age">Age:</label>
+                    <select class="dropdown" id="age">
+                        <option value="">Select Age</option>
+                        <option value="18-30">18-30</option>
+                        <option value="30-50">30-50</option>
+                        <option value="50-70">50-70</option>
+                    </select>
+
+                    <label for="roadtype">Road Type:</label>
+                    <select class="dropdown" id="roadtype">
+                        <option value="">Select Road Type</option>
+                        <option value="highway">Highway</option>
+                        <option value="city">City</option>
+                        <option value="rural">Rural</option>
+                    </select>
+                </div>
+            </div>
+            <button class="result-button" id="resultButton" onclick="showProbability()">Show Result</button>
+        </div>
+        <div class="right-content">
+            <div class="probability" id="probability"></div>
+            <button class="button" id="safeRouteButton" onclick="navigateDynamic()" disabled>Safe Route</button>
+        </div>
+    </div>
+
+    <div class="contact-page" id="contactPage">
+        <button class="back-button" onclick="closeContact()">Back</button>
+        <h2>Contact Information</h2>
+        <p>Email: drift3sr1@gmail.com</p>
+        <p>Phone: 9995539780</p>
+        <p>Address: College of Engineering Perumon</p>
+    </div>
+
+    <div class="help-page" id="helpPage">
+        <button class="back-button" onclick="closeHelp()">Back</button>
+        <div class="chat-box">
+            <textarea placeholder="Type your message here..."></textarea>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 
     <script>
-        var map = L.map('map').setView([20.5937, 78.9629], 5); // Center map to India
-        
-        // Load OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        function showManual() {
+            document.getElementById('manualPage').style.display = 'flex';
+        }
 
-        var routeControl;
+        function closeManual() {
+            document.getElementById('manualPage').style.display = 'none';
+        }
 
-        function plotRoute() {
-            var source = document.getElementById("source").value.split(",");
-            var destination = document.getElementById("destination").value.split(",");
+        function showProbability() {
+            document.getElementById('probability').innerHTML = 'Probability: 80%';
+            document.getElementById('safeRouteButton').disabled = false;
+            document.getElementById('resultButton').style.display = 'none';
+        }
 
-            if (source.length !== 2 || destination.length !== 2) {
-                alert("Please enter valid coordinates in 'lat,lng' format.");
-                return;
+        function navigateDynamic() {
+            closeManual();
+        }
+
+        function showContact() {
+            document.getElementById('contactPage').style.display = 'flex';
+        }
+
+        function closeContact() {
+            document.getElementById('contactPage').style.display = 'none';
+        }
+
+        function showHelp() {
+            document.getElementById('helpPage').style.display = 'flex';
+        }
+
+        function closeHelp() {
+            document.getElementById('helpPage').style.display = 'none';
+        }
+
+        function sendMessage() {
+            const textarea = document.querySelector('.chat-box textarea');
+            const message = textarea.value.trim();
+            if (message) {
+                alert(`Message sent: ${message}`);
+                textarea.value = ''; // Clear the textarea
+            } else {
+                alert('Please type a message before sending.');
             }
+        }
 
-            var srcLatLng = L.latLng(parseFloat(source[0]), parseFloat(source[1]));
-            var destLatLng = L.latLng(parseFloat(destination[0]), parseFloat(destination[1]));
-
-            if (routeControl) {
-                map.removeControl(routeControl);
-            }
-
-            // Add routing with OSRM service
-            routeControl = L.Routing.control({
-                waypoints: [srcLatLng, destLatLng],
-                routeWhileDragging: true,
-                router: L.Routing.osrmv1({
-                    serviceUrl: 'https://router.project-osrm.org/route/v1' // Driving route service
-                }),
-                createMarker: function(i, waypoint, n) {
-                    return L.marker(waypoint.latLng).bindPopup(i === 0 ? "Source" : "Destination");
-                }
-            }).addTo(map);
+        function showFeedback() {
+            alert("Thank you for your feedback!");
         }
     </script>
-
 </body>
 </html>
